@@ -1,7 +1,13 @@
-const messenger = (log: string) => {
-  console.log(log);
-};
+import { Server } from "socket.io";
 
-messenger("log this");
-messenger("log that");
-messenger("log hht");
+const io = new Server({
+  cors: {
+    origin: ["http://localhost:8080", "http://127.0.0.1:5500"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log(socket.id);
+});
+
+io.listen(3000);

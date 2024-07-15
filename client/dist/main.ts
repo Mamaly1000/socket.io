@@ -1,4 +1,11 @@
+import { Socket, io } from "socket.io-client";
 import "../css/input.css";
+
+const socket: Socket = io("http://localhost:3000");
+
+socket.on("connect", () => {
+  displayChatHeader(`chat id : ${socket.id}`);
+});
 
 const chat_form = document.getElementById("chat-form");
 
@@ -10,7 +17,7 @@ const message_input = document.getElementById(
 const room_input = document.getElementById("room-input") as HTMLTextAreaElement;
 const join_button = document.getElementById("join-button");
 
-const chat_header = document.getElementById("chat-header");
+const chat_header = document.getElementById("chat-header") as HTMLDivElement;
 const chat_container = document.getElementById("message-container");
 
 function onSubmit(e: SubmitEvent) {
@@ -28,6 +35,10 @@ function displayMessage(message: string) {
   const div = document.createElement("div");
   div.textContent = message;
   chat_container?.appendChild(div);
+}
+
+function displayChatHeader(message: string) {
+  chat_header.textContent = message;
 }
 
 chat_form?.addEventListener("submit", (e) => onSubmit(e));

@@ -1,7 +1,7 @@
 {
   "scripts": {
     "style": "npx tailwindcss -i ./css/input.css -o ./css/output.css --watch",
-    "start": "webpack"
+    "dev": "webpack"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.19",
-    "cssnano": "^7.0.4"
+    "cssnano": "^7.0.4",
+    "socket.io-client": "^4.7.5"
   }
 }
