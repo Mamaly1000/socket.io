@@ -1,8 +1,21 @@
 {
   "scripts": {
-    "style":"npx tailwindcss -i ./css/input.css -o ./css/output.css --watch"
+    "style": "npx tailwindcss -i ./css/input.css -o ./css/output.css --watch",
+    "start": "webpack"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.4"
+    "css-loader": "^7.1.2",
+    "postcss": "^8.4.39",
+    "postcss-loader": "^8.1.1",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^3.4.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.5.3",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.19",
+    "cssnano": "^7.0.4"
   }
 }
