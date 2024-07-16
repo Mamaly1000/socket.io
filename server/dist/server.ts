@@ -30,7 +30,7 @@ io.on("connection", (socket) => {
       socket.emit("chat-header", { room, type: "join" });
       socket.emit("recieve-message", {
         message: `you joined ${room} room`,
-        type: "info",
+        type: "success",
       });
     } catch (e) {
       console.log("[error]", "join room :", e);

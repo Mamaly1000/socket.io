@@ -9,6 +9,14 @@ html {
   @apply w-full min-h-screen;
 }
 
+* {
+  @apply transition-all;
+}
+
+button {
+  @apply cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
+}
+
 .chat-container {
   @apply flex items-start justify-between  flex-col border-[1px] rounded-sm border-neutral-800 overflow-auto relative max-h-full;
 }
@@ -24,35 +32,41 @@ html {
 .message-container {
   @apply bg-transparent flex items-start justify-start flex-col min-w-full max-w-full relative z-10;
 }
+
 #chat-form {
-  @apply min-w-full  max-w-full flex flex-col items-start justify-start gap-2 sticky bottom-0 left-0 min-h-fit p-3 z-20;
+  @apply min-w-full max-w-full flex flex-row items-start justify-between gap-3 sticky bottom-0 left-0 min-h-fit z-20 bg-neutral-800;
 }
 
 .input-container {
-  @apply w-full flex items-center justify-center relative;
+  @apply min-w-full max-w-full  w-full flex items-center justify-center relative px-4 py-3 ps-14;
 }
-
+.reset-chat-button {
+  @apply bg-red-700 text-sm p-2 hover:bg-opacity-50 start-4 top-3  rounded-full absolute cursor-pointer hover:scale-105 transition-all z-20;
+}
 .input-container button {
-  @apply absolute top-3 end-2 z-10 capitalize p-2 rounded-md bg-indigo-600 text-sm hover:scale-105 focus:scale-95 transition-all;
+  @apply absolute top-3 end-4 z-10 capitalize p-2 rounded-md bg-indigo-600 text-sm hover:scale-105 focus:scale-95 transition-all;
 }
 .input-container textarea {
-  @apply min-h-[50px] rounded-md outline-none py-1 capitalize px-2 z-[1] hover:border-indigo-800 border-indigo-500 border-[1px] bg-neutral-500/30 w-full pe-5 line-clamp-1 transition-all;
+  @apply p-3 rounded-md outline-none py-1 capitalize z-[1] w-full bg-transparent pe-14 line-clamp-1 transition-all min-h-[60px] max-h-[140px];
 }
+
 .message-component {
   @apply w-full p-2 flex flex-row items-start justify-start gap-1 max-w-full border-b-[1px] border-neutral-800;
 }
-
+.message-action-section {
+  @apply flex items-center justify-end gap-2;
+}
 .message-text {
   @apply w-full text-wrap font-light max-w-full overflow-x-auto;
 }
 .message-info {
-  @apply w-full max-w-full flex flex-col sm:flex-row justify-start items-start sm:justify-between gap-1;
+  @apply w-full max-w-full flex flex-col sm:flex-row justify-start items-center sm:justify-between gap-1;
 }
 .message-info span {
   @apply text-neutral-400 text-xs capitalize font-light;
 }
 .message {
-  @apply bg-neutral-950 text-lg capitalize;
+  @apply bg-neutral-950 text-lg capitalize hover:bg-neutral-950/50;
 }
 .info {
   @apply bg-indigo-900  text-center text-sm;
@@ -62,6 +76,9 @@ html {
 }
 .warn {
   @apply bg-yellow-800 text-center text-sm;
+}
+.success {
+  @apply bg-green-800 text-center text-sm;
 }
 .private {
   @apply bg-gray-900 text-lg;
@@ -97,8 +114,14 @@ html {
   @apply max-w-full min-w-[100px] overflow-hidden bg-transparent border-[1px] border-indigo-700 text-white outline-none hover:border-indigo-900 rounded-md p-2 text-sm;
 }
 .room-button {
-  @apply bg-indigo-700 text-sm px-2 py-1 rounded-md capitalize;
+  @apply bg-indigo-700 text-sm px-2 py-1 rounded-md capitalize disabled:opacity-50 cursor-not-allowed;
 }
 .room-leave-button {
   @apply bg-red-700 text-sm p-1 px-2 py-1 rounded-md capitalize;
+}
+.reply-button {
+  @apply px-3 py-2 text-xs rounded-md drop-shadow-2xl bg-indigo-600 capitalize;
+}
+.reply-component {
+  @apply absolute bottom-[10%] left-4 text-xs px-2 py-1 rounded-md  bg-indigo-700 hover:bg-indigo-900 cursor-pointer;
 }

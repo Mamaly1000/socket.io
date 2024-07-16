@@ -6,6 +6,7 @@ export interface HeaderPorps {
   currentRoom: string;
   status: StatusTypes;
   socket?: Socket;
+  setRoom?: (room?: string) => void;
 }
 
 const Header = ({
@@ -13,12 +14,13 @@ const Header = ({
   status,
   title,
   socket,
+  setRoom,
 }: Partial<HeaderPorps>) => {
   const chat_header = document.getElementById("chat-header") as HTMLDivElement;
 
   chat_header.innerHTML = "";
   chat_header.appendChild(title_section({ status, title }));
-  chat_header.appendChild(room_section({ currentRoom, socket }));
+  chat_header.appendChild(room_section({ currentRoom, socket, setRoom }));
 };
 
 export default Header;
@@ -48,7 +50,9 @@ const title_section = ({
 const room_section = ({
   currentRoom,
   socket,
+  setRoom,
 }: {
+  setRoom?: (room?: string) => void;
   socket?: Socket;
   currentRoom?: string;
 }) => {
@@ -59,22 +63,28 @@ const room_section = ({
   const room_input = document.createElement("input");
   room_input.classList.add("room-input");
   room_input.placeholder = "join a room...";
-  room_input.onkeydown = (e) => {
+  room_input.addEventListener("keypress", (e) => {
     const room = room_input.value;
     if (e.key === "Enter") {
       if (room.trim().length > 0) {
         socket?.emit("join-room", room);
+        setRoom!(room);
       }
     }
-  };
+    if (room_input.value.trim().length > 0) {
+      join_button.disabled = false;
+    }
+  });
   // join button
   const join_button = document.createElement("button");
   join_button.classList.add("room-button");
   join_button.textContent = "join";
+  join_button.disabled = room_input.value.trim().length > 0 ? false : true;
   join_button.addEventListener("click", () => {
     const room = room_input.value;
     if (room.trim().length > 0) {
       socket?.emit("join-room", room);
+      setRoom!(room);
     }
   });
   // leave button
@@ -87,6 +97,7 @@ const room_section = ({
     socket?.emit("leave-room", currentRoom);
     room_input.value = "";
     leave_button.setAttribute("current-room-name", "");
+    setRoom!(undefined);
   });
   if (currentRoom) {
     header_room_section.appendChild(leave_button);

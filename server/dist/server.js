@@ -26,7 +26,7 @@ io.on("connection", function (socket) {
             socket.emit("chat-header", { room: room, type: "join" });
             socket.emit("recieve-message", {
                 message: "you joined ".concat(room, " room"),
-                type: "info",
+                type: "success",
             });
         }
         catch (e) {
