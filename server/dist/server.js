@@ -23,7 +23,7 @@ io.on("connection", function (socket) {
                 message: "".concat(socket.id, " joined ").concat(room, " room"),
                 type: "info",
             });
-            socket.emit("chat-header", room);
+            socket.emit("chat-header", { room: room, type: "join" });
             socket.emit("recieve-message", {
                 message: "you joined ".concat(room, " room"),
                 type: "info",
@@ -33,6 +33,40 @@ io.on("connection", function (socket) {
             console.log("[error]", "join room :", e);
             socket.emit("recieve-message", {
                 message: "couldnt perform requested action",
+                type: "error",
+            });
+        }
+    });
+    socket.on("leave-room", function (room) {
+        try {
+            socket.leave(room);
+            socket.emit("chat-header", { room: room, type: "leave" });
+            socket.in(room).emit("recieve-message", {
+                message: "".concat(socket.id, " left the room"),
+                type: "error",
+            });
+            socket.emit("recieve-message", {
+                message: "you left the ".concat(room, " room"),
+                type: "info",
+            });
+        }
+        catch (error) {
+            console.log("[socket]:[leave-room] ", error);
+            socket.emit("recieve-message", {
+                message: "unable to leave " + room + " room",
+                type: "error",
+            });
+        }
+    });
+    socket.on("room-message", function (_a) {
+        var message = _a.message, room = _a.room;
+        try {
+            socket.in(room).emit("recieve-message", { message: message, type: "message" });
+        }
+        catch (error) {
+            console.log("[socket]:[room-message] ", error);
+            socket.emit("recieve-message", {
+                message: "unable to send message at ".concat(room, " room"),
                 type: "error",
             });
         }

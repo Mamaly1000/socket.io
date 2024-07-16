@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
         message: `${socket.id} joined ${room} room`,
         type: "info",
       });
-      socket.emit("chat-header", room);
+      socket.emit("chat-header", { room, type: "join" });
       socket.emit("recieve-message", {
         message: `you joined ${room} room`,
         type: "info",
@@ -36,6 +36,37 @@ io.on("connection", (socket) => {
       console.log("[error]", "join room :", e);
       socket.emit("recieve-message", {
         message: "couldnt perform requested action",
+        type: "error",
+      });
+    }
+  });
+  socket.on("leave-room", (room) => {
+    try {
+      socket.leave(room);
+      socket.emit("chat-header", { room, type: "leave" });
+      socket.in(room).emit("recieve-message", {
+        message: `${socket.id} left the room`,
+        type: "error",
+      });
+      socket.emit("recieve-message", {
+        message: `you left the ${room} room`,
+        type: "info",
+      });
+    } catch (error) {
+      console.log(`[socket]:[leave-room] `, error);
+      socket.emit("recieve-message", {
+        message: "unable to leave " + room + " room",
+        type: "error",
+      });
+    }
+  });
+  socket.on("room-message", ({ message, room }) => {
+    try {
+      socket.in(room).emit("recieve-message", { message, type: "message" });
+    } catch (error) {
+      console.log(`[socket]:[room-message] `, error);
+      socket.emit("recieve-message", {
+        message: `unable to send message at ${room} room`,
         type: "error",
       });
     }

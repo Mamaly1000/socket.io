@@ -2,12 +2,12 @@ import { Socket, io } from "socket.io-client";
 import "../css/input.css";
 import MessageComponent from "./message";
 import { MessageTypes } from "./message";
+import Header, { HeaderPorps } from "./header";
 
 const date = new Date();
-const socket: Socket = io("http://localhost:3000");
+const socket: Socket = io("http://localhost:3000").timeout(4000);
 const chat_form = document.getElementById("chat-form");
 
-const send_message_button = document.getElementById("public-message");
 const message_input = document.getElementById(
   "chat-input"
 ) as HTMLTextAreaElement;
@@ -15,21 +15,36 @@ const message_input = document.getElementById(
 const room_input = document.getElementById("room-input") as HTMLTextAreaElement;
 const join_button = document.getElementById("join-button") as HTMLButtonElement;
 
-const chat_header = document.getElementById("chat-header") as HTMLDivElement;
 const chat_container = document.getElementById(
   "message-container"
 ) as HTMLDivElement;
 
 socket.on("connect", () => {
-  displayChatHeader(`your id: ${socket.id}`);
-
+  displayChatHeader({
+    socket,
+    title: `your id: ${socket.id}`,
+    status: "connected",
+  });
   socket.on("recieve-message", (...data) => {
     data.forEach(({ message, sender, type, room }) => {
       displayMessage({ message, sender, room, type });
     });
   });
-  socket.on("chat-header", (room) => {
-    displayChatHeader(`your id: ${socket.id} room: ${room}`);
+  socket.on("chat-header", ({ room, type }) => {
+    if (type === "join") {
+      displayChatHeader({
+        socket,
+        title: `your id: ${socket.id}`,
+        status: "connected",
+        currentRoom: room,
+      });
+    } else {
+      displayChatHeader({
+        socket,
+        title: `your id: ${socket.id}`,
+        status: "connected",
+      });
+    }
   });
   socket.on("error", ({ message, type }) => {
     displayMessage({
@@ -38,26 +53,53 @@ socket.on("connect", () => {
     });
   });
 });
+socket.on("disconnect", (reason) => {
+  if (reason === "io server disconnect") {
+    displayChatHeader({
+      socket,
+      title: `your id: ${socket.id}`,
+      status: "disconnected",
+    });
+  }
+});
+socket.on("offline", () => {
+  displayChatHeader({
+    socket,
+    title: `your id: ${socket.id}`,
+    status: "disconnected",
+  });
+});
+socket.on("connect_error", function () {
+  displayChatHeader({
+    socket,
+    title: `your id: ${socket.id}`,
+    status: "disconnected",
+  });
+});
 
 function onSubmit(e: SubmitEvent) {
   e.preventDefault();
   const message = message_input?.value;
-  const room = room_input?.value;
+  const room =
+    document
+      .getElementById("room-button-id")
+      ?.getAttribute("current-room-name") || "";
 
   if (message.trim() === "" || !message) return;
+  console.log(room);
 
-  if (!room) {
+  if (!!room) {
     displayMessage({
       message,
-      socket_key: "public-message",
+      socket_key: "room-message",
       sender: socket.id,
       type: "message",
+      room,
     });
   } else {
     displayMessage({
-      room,
       message,
-      socket_key: "private-message",
+      socket_key: "public-message",
       sender: socket.id,
       type: "message",
     });
@@ -93,8 +135,8 @@ function displayMessage({
   scrollToBottom();
 }
 
-function displayChatHeader(message: string) {
-  chat_header.textContent = message;
+function displayChatHeader(headerProps: Partial<HeaderPorps>) {
+  Header(headerProps);
 }
 
 function scrollToBottom() {
@@ -116,27 +158,47 @@ join_button.addEventListener("click", (e) => {
 [room_input, message_input].forEach((input) =>
   input.addEventListener("keypress", (e) => {
     const message_value = message_input.value;
-    const room_value = room_input.value;
+    const private_chat_id = room_input.value;
+    const room_id =
+      document
+        .getElementById("room-button-id")
+        ?.getAttribute("current-room-name") || "";
     if (e.key === "Enter") {
       e.preventDefault();
 
-      if (room_value === "" && message_value === "") return;
-      if (room_value.trim().length > 0 && message_value.trim().length > 0) {
+      if (private_chat_id === "" && message_value === "") return;
+      if (
+        private_chat_id.trim().length > 0 &&
+        message_value.trim().length > 0
+      ) {
         displayMessage({
           message: message_value,
           socket_key: "private-message",
-          room: room_value,
+          room: private_chat_id,
           sender: socket.id,
           type: "private",
         });
       }
-      if (room_value.trim().length === 0 && message_value.trim().length > 0) {
-        displayMessage({
-          message: message_value,
-          socket_key: "public-message",
-          sender: socket.id,
-          type: "message",
-        });
+      if (
+        private_chat_id.trim().length === 0 &&
+        message_value.trim().length > 0
+      ) {
+        if (room_id.trim().length > 0) {
+          displayMessage({
+            message: message_value,
+            socket_key: "room-message",
+            sender: socket.id,
+            type: "message",
+            room: room_id,
+          });
+        } else {
+          displayMessage({
+            message: message_value,
+            socket_key: "public-message",
+            sender: socket.id,
+            type: "message",
+          });
+        }
       }
       scrollToBottom();
     }
