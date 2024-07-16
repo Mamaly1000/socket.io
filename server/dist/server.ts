@@ -10,28 +10,61 @@ const io = new Server({
 
 io.on("connection", (socket) => {
   socket.on(
-    "send-message",
+    "public-message",
     ({ message, room }: { message: string; room?: string }) => {
-      if (!room) {
-        socket.broadcast.emit("recieve-message", message);
-      } else {
-        socket.to(room).emit("recieve-message", message);
-      }
+      socket.broadcast.emit("recieve-message", {
+        message,
+        sender: socket.id,
+        room: undefined,
+        type: "message",
+      });
     }
   );
   socket.on("join-room", function (room) {
     try {
       socket.join(room);
-      socket
-        .to(room)
-        .emit("recieve-message", `${socket.id} joined ${room} room`);
+      socket.to(room).emit("recieve-message", {
+        message: `${socket.id} joined ${room} room`,
+        type: "info",
+      });
       socket.emit("chat-header", room);
-      socket.emit("recieve-message", `you joined ${room} room`);
+      socket.emit("recieve-message", {
+        message: `you joined ${room} room`,
+        type: "info",
+      });
     } catch (e) {
       console.log("[error]", "join room :", e);
-      socket.emit("recieve-message", "couldnt perform requested action");
+      socket.emit("recieve-message", {
+        message: "couldnt perform requested action",
+        type: "error",
+      });
     }
   });
+  socket.on(
+    "private-message",
+    ({ room, message }: { room: string; message: string }) => {
+      try {
+        socket.to(room).emit(
+          "recieve-message",
+          {
+            message,
+            sender: socket.id,
+            type: "private",
+          },
+          {
+            message: `${socket.id} sent you a private message`,
+            type: "info",
+          }
+        );
+      } catch (error) {
+        console.log(`[socket]:[private-message] `, error);
+        socket.emit("error", {
+          message: `unable to send message to ${room}`,
+          type: "error",
+        });
+      }
+    }
+  );
 });
 
 instrument(io, { auth: false, mode: "development" });

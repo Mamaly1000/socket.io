@@ -7,27 +7,54 @@ var io = new Server({
     },
 });
 io.on("connection", function (socket) {
-    socket.on("send-message", function (_a) {
+    socket.on("public-message", function (_a) {
         var message = _a.message, room = _a.room;
-        if (!room) {
-            socket.broadcast.emit("recieve-message", message);
-        }
-        else {
-            socket.to(room).emit("recieve-message", message);
-        }
+        socket.broadcast.emit("recieve-message", {
+            message: message,
+            sender: socket.id,
+            room: undefined,
+            type: "message",
+        });
     });
     socket.on("join-room", function (room) {
         try {
             socket.join(room);
-            socket
-                .to(room)
-                .emit("recieve-message", "".concat(socket.id, " joined ").concat(room, " room"));
+            socket.to(room).emit("recieve-message", {
+                message: "".concat(socket.id, " joined ").concat(room, " room"),
+                type: "info",
+            });
             socket.emit("chat-header", room);
-            socket.emit("recieve-message", "you joined ".concat(room, " room"));
+            socket.emit("recieve-message", {
+                message: "you joined ".concat(room, " room"),
+                type: "info",
+            });
         }
         catch (e) {
             console.log("[error]", "join room :", e);
-            socket.emit("recieve-message", "couldnt perform requested action");
+            socket.emit("recieve-message", {
+                message: "couldnt perform requested action",
+                type: "error",
+            });
+        }
+    });
+    socket.on("private-message", function (_a) {
+        var room = _a.room, message = _a.message;
+        try {
+            socket.to(room).emit("recieve-message", {
+                message: message,
+                sender: socket.id,
+                type: "private",
+            }, {
+                message: "".concat(socket.id, " sent you a private message"),
+                type: "info",
+            });
+        }
+        catch (error) {
+            console.log("[socket]:[private-message] ", error);
+            socket.emit("error", {
+                message: "unable to send message to ".concat(room),
+                type: "error",
+            });
         }
     });
 });

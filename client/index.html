@@ -6,23 +6,31 @@
     <title>socket.io tutorial</title>
   </head>
   <body
-    class="bg-neutral-900 w-full h-screen text-white grid grid-cols-1 overflow-hidden max-h-screen content-between"
+    class="bg-neutral-900 w-full h-screen text-white grid grid-cols-1 content-between overflow-x-hidden"
   >
     <div class="chat-container">
       <div class="chat-header" id="chat-header"># chat header</div>
       <div class="message-container" id="message-container"></div>
     </div>
-
     <form id="chat-form">
       <div class="input-container group">
-        <textarea type="text" id="chat-input" placeholder="message"></textarea>
+        <textarea
+          type="text"
+          autofocus="true"
+          id="chat-input"
+          placeholder="chat now..."
+        ></textarea>
         <button type="submit" id="send-message">send</button>
       </div>
       <div class="input-container group">
-        <textarea type="text" id="room-input" placeholder="room"></textarea>
+        <textarea
+          type="text"
+          id="room-input"
+          placeholder="private message..."
+        ></textarea>
         <button type="submit" id="join-button">join</button>
       </div>
     </form>
-    <script src="./dist/bundle.js"></script>
+    <script type="module" src="./dist/bundle.js"></script>
   </body>
 </html>

@@ -2,14 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+body,
+:root,
+html {
+  box-sizing: border-box;
+  @apply w-full min-h-screen;
+}
+
 .chat-container {
   @apply flex items-start justify-between  flex-col border-[1px] rounded-sm border-neutral-800 overflow-auto relative max-h-full;
 }
 .chat-header {
-  @apply w-full min-h-[50px] flex items-center justify-start max-h-[50px] max-w-full line-clamp-1 px-2 py-1 capitalize text-2xl text-white font-semibold bg-neutral-800 sticky top-0 left-0 z-20;
+  @apply w-full min-h-[50px] flex items-center justify-between flex-wrap gap-2 max-h-[50px] max-w-full line-clamp-1 px-2 py-1 capitalize text-[2vh] text-white font-semibold bg-neutral-800 sticky top-0 left-0 z-20;
 }
 .message-container {
-  @apply bg-transparent max-h-full flex items-start justify-start gap-5 flex-col min-w-full min-h-screen overflow-auto max-w-full relative z-10;
+  @apply bg-transparent flex items-start justify-start flex-col min-w-full max-w-full relative z-10;
 }
 #chat-form {
   @apply min-w-full max-w-full flex flex-col items-start justify-start gap-2 sticky bottom-0 left-0 min-h-fit p-3 z-20;
@@ -24,4 +31,50 @@
 }
 .input-container textarea {
   @apply min-h-[50px] rounded-md outline-none py-1 capitalize px-2 z-[1] hover:border-indigo-800 border-indigo-500 border-[1px] bg-neutral-500/30 w-full pe-5 line-clamp-1 transition-all;
+}
+.message-component {
+  @apply w-full p-2 flex flex-row items-start justify-start gap-1 max-w-full border-b-[1px] border-neutral-800;
+}
+
+.message-text {
+  @apply w-full text-wrap font-light max-w-full overflow-x-auto;
+}
+.message-info {
+  @apply w-full max-w-full flex flex-col sm:flex-row justify-start items-start sm:justify-between gap-1;
+}
+.message-info span {
+  @apply text-neutral-400 text-xs capitalize font-light;
+}
+.message {
+  @apply bg-neutral-950 text-lg;
+}
+.info {
+  @apply bg-indigo-800 text-center text-sm;
+}
+.error {
+  @apply bg-red-950 text-center text-sm;
+}
+.warn {
+  @apply bg-yellow-800 text-center text-sm;
+}
+.private {
+  @apply bg-gray-900 text-lg;
+}
+.circle {
+  @apply min-w-[10px] min-h-[10px] rounded-full drop-shadow-2xl animate-pulse;
+}
+.circle-private {
+  @apply bg-indigo-800;
+}
+.circle-message {
+  @apply bg-green-900;
+}
+.circle-info {
+  @apply bg-indigo-800 text-center text-sm;
+}
+.circle-error {
+  @apply bg-red-950 text-center text-sm;
+}
+.circle-warn {
+  @apply bg-yellow-800 text-center text-sm;
 }
