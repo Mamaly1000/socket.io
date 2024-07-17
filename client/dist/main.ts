@@ -40,6 +40,15 @@ const Main_Chat_Input = new ChatInputComponent({
         socket_key: "room-message",
       });
     }
+    if (message && private_id && room) {
+      displayMessage({
+        message,
+        type: "private",
+        room: private_id,
+        sender: socket.id,
+        socket_key: "private-message",
+      });
+    }
   },
 });
 Main_Chat_Input.render();
